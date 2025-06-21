@@ -1,0 +1,76 @@
+<?php
+/**
+ * ViraXpress - https://www.viraxpress.com
+ *
+ * LICENSE AGREEMENT
+ *
+ * This file is part of the ViraXpress package and is licensed under the ViraXpress license agreement.
+ * You can view the full license at:
+ * https://www.viraxpress.com/license
+ *
+ * By utilizing this file, you agree to comply with the terms outlined in the ViraXpress license.
+ *
+ * DISCLAIMER
+ *
+ * Modifications to this file are discouraged to ensure seamless upgrades and compatibility with future releases.
+ *
+ * @author      ViraXpress
+ * @copyright   © 2024 ViraXpress (https://www.viraxpress.com/)
+ * @license     https://www.viraxpress.com/license
+ */
+?>
+
+<?php
+$themePath = $block->checkThemePath();
+$baseUrl = $escaper->escapeUrl($block->getBaseUrl());
+$customPath = 'vx/'.$themePath.'/web/';
+$mediaUrl = $baseUrl . $escaper->escapeUrl($customPath);
+// Define assets
+$stylesheets = [
+    'css/styles.css'
+];
+?>
+
+<?php foreach ($stylesheets as $stylesheet): ?>
+    <?= /* @noEscape */ $secureRenderer->renderTag(
+        'link',
+        [
+            'rel' => 'stylesheet preload',
+            'type' => 'text/css',
+            'media' => 'all',
+            'as' => 'style',
+            'href' => $escaper->escapeUrl($mediaUrl . $escaper->escapeHtmlAttr($stylesheet) . '?' . time())
+        ]
+    ); ?>
+<?php endforeach; ?>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const assetsToRemove = [
+            'mage/calendar.css',
+            'jquery/uppy/dist/uppy-custom.css',
+            'css/styles-m.css',
+            'css/styles-l.css',
+            'css/print.css',
+            'fonts/opensans/light/opensans-300.woff2',
+            'fonts/opensans/regular/opensans-400.woff2',
+            'fonts/opensans/semibold/opensans-600.woff2',
+            'fonts/opensans/bold/opensans-700.woff2',
+            'fonts/Luma-Icons.woff2',
+            'requirejs/require.js',
+            'requirejs-config.js'
+        ];
+        
+        assetsToRemove.forEach(asset => {
+            const elements = document.querySelectorAll(`[href*="${asset}"], [src*="${asset}"]`);
+            elements.forEach(el => el.remove());
+        });
+
+        const scripts = document.querySelectorAll('script');
+
+        scripts.forEach(script => {
+            if (script.innerHTML.includes('require.config')) {
+                script.parentNode.removeChild(script);
+            }
+        });
+    });
+</script>
